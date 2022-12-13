@@ -1,0 +1,28 @@
+<div>
+  <p>To Do List</p>
+
+
+  <.form for={:new_todo} let={f} phx-submit="todo_form_submit">
+    <%= text_input f, :message %>
+  </.form>
+
+  <p>
+    <strong>Filtros</strong>
+    <.filter_button current_filter={@filter} filter="all" label="Todos"/>
+    <.filter_button current_filter={@filter} filter="active" label="Pendentes"/>
+    <.filter_button current_filter={@filter} filter="completed" label="Finalizados"/>
+  </p>
+
+    <%=if @has_completed? do %>
+      <p>
+        <strong>Açoes</strong>
+          <button phx-click="clear_completed">Limpar finalizados</button>
+      </p>
+    <% end %>
+
+  <ul>
+    <%=for todo <- @filtered_todos do %>
+      <li><%= todo.title %>(<%= if todo.completed?, do: "Finalizado", else: "Pendente" %>)</li>
+    <% end %>
+  </ul>
+</div>
