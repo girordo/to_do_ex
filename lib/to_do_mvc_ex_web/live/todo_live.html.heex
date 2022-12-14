@@ -1,5 +1,5 @@
 <div>
-  <p>To Do List</p>
+  <p>To Do List <%= @active_count %> itens faltando</p>
 
 
   <.form for={:new_todo} let={f} phx-submit="todo_form_submit">
@@ -22,7 +22,13 @@
 
   <ul>
     <%=for todo <- @filtered_todos do %>
-      <li><%= todo.title %>(<%= if todo.completed?, do: "Finalizado", else: "Pendente" %>)</li>
+      <li>
+        <%= todo.title %>(<%= if todo.completed?, do: "Finalizado", else: "Pendente" %>)
+
+        <button phx-click="toggle_todo_completed" phx-value-id={todo.id}>
+          <%= if todo.completed?, do: "Ativar", else: "Pendente" %>
+        </button>
+      </li>
     <% end %>
   </ul>
 </div>

@@ -14,6 +14,7 @@ defmodule ToDoMvcExWeb.TodoLive do
       |> assign(:todos, todos)
       |> assign(:filtered_todos, todos)
       |> update_has_completed()
+      |> count_active()
 
     {:ok, socket}
   end
@@ -54,6 +55,24 @@ defmodule ToDoMvcExWeb.TodoLive do
     {:noreply, socket}
   end
 
+  def handle_event("toggle_todo_completed", %{"id" => id}, socket) do
+    socket =
+      socket
+      |> assign(
+        :todos,
+        for todo <- socket.assigns.todos do
+          if todo.id == id do
+            %{todo | completed?: not todo.completed?}
+          else
+            todo
+          end
+        end
+      )
+      |> filter_todos()
+
+    {:noreply, socket}
+  end
+
   def filter_button(assigns) do
     ~H"""
     <button phx-click="change_filter"
@@ -86,6 +105,17 @@ defmodule ToDoMvcExWeb.TodoLive do
       Enum.any?(socket.assigns.todos, fn todo ->
         todo.completed?
       end)
+    )
+  end
+
+  defp count_active(socket) do
+    socket
+    |> assign(
+      :active_count,
+      Enum.count(
+        socket.assigns.todos,
+        fn todo -> not todo.completed? end
+      )
     )
   end
 end
